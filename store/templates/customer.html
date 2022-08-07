@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storefront</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <ul>
+        {% for customer in customers %}
+        <li> <b>{{customer.full_name}}</b>  -  {{customer.total_amount}} </li>
+        <!-- <li> {{customer.first_name}}  {{customer.email}} </li> -->
+        {% endfor %}
+    </ul>
+    <ul>
+        <!-- {% for collection in collections %}
+        <li>
+            {{collection.title}}
+        </li>
+        {% endfor%} -->
+    </ul>
+</body>
+</html>
+

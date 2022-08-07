@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Storefront</title>
+</head>
+<body>
+    <ul>
+        <!-- {{result}} -->
+        {% for product in products %}
+        <li> {{product.title}} </li>
+        <!-- <li> {{product.title}} -  {{product.total_sales}} </li> -->
+        <!-- <li> {{product.collection}} </li> -->
+        <!-- <li> {{product.title}} ${{product.unit_price}} {{product.collection_id}}</li> -->
+        {% endfor %}
+    </ul>
+
+
+</body>
+</html>
+
