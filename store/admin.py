@@ -1,8 +1,9 @@
 from itertools import count, product
+from msilib.schema import Error
 from pickletools import read_uint1
 from turtle import update
 from django.db.models.aggregates import Count, Sum, Min, Max, Avg
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.http import HttpRequest
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
@@ -58,7 +59,8 @@ class ProductAdmin(admin.ModelAdmin):
         updated_count = queryset.update(inventory=0)
         self.message_user(
             request,
-            f'{updated_count} Products were successfully updated.'
+            f'{updated_count} Products were successfully updated.',
+            messages.ERROR
         )
 
 
