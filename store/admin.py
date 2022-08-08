@@ -1,6 +1,7 @@
 from itertools import count, product
 from msilib.schema import Error
 from pickletools import read_uint1
+from pkgutil import extend_path
 from turtle import update
 from django.db.models.aggregates import Count, Sum, Min, Max, Avg
 from django.contrib import admin, messages
@@ -38,6 +39,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    search_fields = ['title']
     autocomplete_fields = ['collection']
     prepopulated_fields = {
         'slug': ['title']
@@ -68,6 +70,26 @@ class ProductAdmin(admin.ModelAdmin):
         )
 
 
+@admin.register(models.Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    list_display = ['title', 'products_count']
+    search_fields = ['title']
+
+    @admin.display(ordering='products_count')
+    def products_count(self, collection):
+        # reverse('admin:app_Target_model_name_page_name')
+        url = (
+            reverse('admin:store_product_changelist')
+            + '?'
+            + urlencode({
+                'collection__id': str(collection.id)
+            }))
+        return format_html('<a href="{}">{}</a>', url, collection.products_count)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(products_count=Count('product'))
+
+
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
@@ -88,30 +110,19 @@ class CustomerAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>', url, customer.id)
 
 
+class OrderItemInline(admin.TabularInline):
+    autocomplete_fields = ['product']
+    min_num = 1
+    max_num = 10
+    model = models.OrderItem
+    extra = 0
+
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['customer']
+    inlines = [OrderItemInline]
     list_display = ['id', 'placed_at', 'customer']
-
-
-@admin.register(models.Collection)
-class CollectionAdmin(admin.ModelAdmin):
-    list_display = ['title', 'products_count']
-    search_fields = ['title']
-
-    @admin.display(ordering='products_count')
-    def products_count(self, collection):
-        # reverse('admin:app_Target_model_name_page_name')
-        url = (
-            reverse('admin:store_product_changelist')
-            + '?'
-            + urlencode({
-                'collection__id': str(collection.id)
-            }))
-        return format_html('<a href="{}">{}</a>', url, collection.products_count)
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).annotate(products_count=Count('product'))
 
 
 @admin.register(models.OrderItem)
