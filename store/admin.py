@@ -1,5 +1,6 @@
 from itertools import count, product
 from pickletools import read_uint1
+from turtle import update
 from django.db.models.aggregates import Count, Sum, Min, Max, Avg
 from django.contrib import admin
 from django.http import HttpRequest
@@ -36,6 +37,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    actions = ['clear_inventory']
     list_display = ['title', 'unit_price', 'inventory_status', 'collection']
     list_editable = ['unit_price']
     list_per_page = 10
@@ -50,6 +52,14 @@ class ProductAdmin(admin.ModelAdmin):
         if product.inventory < 50:
             return 'OK'
         return "OK"
+
+    @admin.action(description='Clear Inventory')
+    def clear_inventory(self, request, queryset):
+        updated_count = queryset.update(inventory=0)
+        self.message_user(
+            request,
+            f'{updated_count} Products were successfully updated.'
+        )
 
 
 @admin.register(models.Customer)
