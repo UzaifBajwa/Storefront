@@ -1,11 +1,9 @@
 from django.db.models.aggregates import Count, Sum, Min, Max, Avg
 from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.http import HttpRequest
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 
-from tags.models import TaggedItem
 from . import models
 # Register your models here.
 
@@ -35,14 +33,8 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=OK)
 
 
-class TagInline(GenericTabularInline):
-    autocomplete_fields = ['tag']
-    model = TaggedItem
-
-
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [TagInline]
     search_fields = ['title']
     autocomplete_fields = ['collection']
     prepopulated_fields = {
