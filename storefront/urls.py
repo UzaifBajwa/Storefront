@@ -22,7 +22,7 @@ admin.site.index_title = 'Storefront Administration'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('playground/', include('playground.urls')),
+    # path('playground/', include('playground.urls')),
     path('store/', include('store.urls')),
     path('__debug__/', include('debug_toolbar.urls'))
 ]
