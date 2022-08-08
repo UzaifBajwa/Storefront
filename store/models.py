@@ -1,12 +1,5 @@
-from concurrent.futures.process import _python_exit
-import email
-from enum import unique
-from itertools import product
-from math import prod
-from secrets import choice
-from statistics import mode
-from tkinter import CASCADE
-from turtle import onscreenclick
+import imp
+from django.core.validators import MinValueValidator
 from typing import Collection
 from django.db import models
 
@@ -41,9 +34,13 @@ class Collection(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
-    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
-    inventory = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    unit_price = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        validators=[MinValueValidator(1)]
+    )
+    inventory = models.IntegerField(validators=[MinValueValidator(1)])
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     # , related_name=product, while default value is product_set
